@@ -1,0 +1,9 @@
+node_modules/
+release*/
+repack*/
+upload-package*/
+*.log
+*.exe
+*.zip
+.env
+.env.*

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Merchant's Assistant</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="titlebar">
+        <div class="titlebar-brand">
+          <span class="brand-mark" aria-hidden="true">₷</span>
+          <div>
+            <p class="eyebrow">Daedric Online</p>
+            <h1>Merchant's Assistant</h1>
+          </div>
+        </div>
+        <div class="window-actions">
+          <button id="always-on-top" class="window-button pin-button active" type="button" title="Always on top: on" aria-pressed="true">⌖</button>
+          <button id="readme-button" class="window-button" type="button" title="Open instructions">?</button>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="intro">
+          <div>
+            <p class="section-label">Merchant's best friend</p>
+            <h2>Price it fair. Sell it smart.</h2>
+          </div>
+          <div class="intro-actions"><button id="open-ledger" class="ledger-button" type="button">Open pricing book</button><button id="open-options" class="options-button" type="button">⚙ Options</button><button id="giggles-button" class="giggles-button" type="button" title="Play Giggles the Unstable">Giggles</button><span class="coin-stack" aria-hidden="true">₷₷₷</span></div>
+        </section>
+
+        <form id="calculator-form" class="calculator-card">
+          <label for="item-name">Item name <span class="label-note">(one item)</span></label>
+          <input id="item-name" name="itemName" type="text" maxlength="120" placeholder="e.g. Iron Ingot" autocomplete="off" />
+          <p class="field-hint">Name one item only. Set the number of items below so the ledger keeps its price per item.</p>
+
+          <div class="field-row">
+            <div>
+              <label for="base-price">Price per item in septims</label>
+              <div class="input-with-suffix"><input id="base-price" name="basePrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0" required /><span>₷</span></div>
+            </div>
+            <div>
+              <label for="quantity">Quantity</label>
+              <div class="quantity-control"><button id="decrease-quantity" type="button" aria-label="Decrease quantity">−</button><input id="quantity" name="quantity" type="text" value="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off" required /><button id="increase-quantity" type="button" aria-label="Increase quantity">+</button></div>
+            </div>
+          </div>
+
+          <label for="markup">Add markup</label>
+          <div class="select-wrap">
+            <select id="markup" name="markup">
+              <option value="0">No markup</option>
+              <option value="10">10% on top</option>
+              <option value="20">20% on top</option>
+              <option value="30">30% on top</option>
+              <option value="40">40% on top</option>
+              <option value="50">50% on top</option>
+              <option value="60">60% on top</option>
+              <option value="70">70% on top</option>
+              <option value="80">80% on top</option>
+              <option value="90">90% on top</option>
+              <option value="100">100% on top</option>
+            </select>
+          </div>
+
+          <button class="calculate-button" type="submit">Calculate asking price <span>→</span></button>
+          <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+        </form>
+
+        <section id="result-card" class="result-card" aria-live="polite" hidden>
+          <div class="result-heading"><span class="section-label">Your asking price</span><span id="result-markup" class="markup-badge"></span></div>
+          <strong id="result-total" class="result-total">0 ₷</strong>
+          <div class="result-breakdown">
+            <div><span>Base value</span><strong id="result-base">0 ₷</strong></div>
+            <div><span>Markup added</span><strong id="result-added">0 ₷</strong></div>
+            <div><span>Per item</span><strong id="result-per-item">0 ₷</strong></div>
+          </div>
+          <button id="copy-button" class="copy-button" type="button">Copy asking price</button>
+        </section>
+
+        <section class="history-section">
+          <div class="section-heading">
+            <div><p class="section-label">Your trade ledger</p><h2>Recent calculations</h2></div>
+            <div class="history-actions"><div class="restore-controls"><select id="restore-count" aria-label="Number of deleted entries to restore"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select><button id="restore-deleted" class="text-button" type="button" disabled>Restore deleted</button></div><button id="clear-history" class="text-button" type="button">Clear all</button></div>
+          </div>
+          <div id="history-list" class="history-list"></div>
+        </section>
+      </main>
+      <footer>Calculations are saved on this computer only.</footer>
+    </div>
+    <section id="ledger-overlay" class="ledger-overlay" hidden aria-hidden="true">
+      <div class="ledger-book" role="dialog" aria-modal="true" aria-labelledby="ledger-title">
+        <div class="ledger-book-heading">
+          <div><p class="section-label">The merchant's record</p><h2 id="ledger-title">Pricing book</h2></div>
+          <button id="close-ledger" class="book-close" type="button" aria-label="Close pricing book">×</button>
+        </div>
+        <div class="ledger-book-body">
+          <nav id="ledger-tabs" class="ledger-tabs" aria-label="Pricing categories"></nav>
+          <div class="ledger-page">
+            <div class="ledger-page-heading"><div><p id="ledger-category-kicker" class="section-label">All recorded wares</p><h3 id="ledger-category-title">Every item</h3></div><div class="ledger-page-tools"><input id="ledger-search" type="search" placeholder="Search the book…" autocomplete="off" /><span id="ledger-count" class="ledger-count"></span></div></div>
+            <div id="ledger-list" class="ledger-list"></div>
+            <section class="ledger-selection" aria-label="Selected items total">
+              <div class="selection-heading"><div><p class="section-label">Bundle counter</p><strong id="selected-count">0 items selected</strong></div><strong id="selected-total" class="selected-total">0 ₷</strong></div>
+              <div class="selection-controls"><label for="bulk-markup">Add upsell</label><div class="select-wrap"><select id="bulk-markup"><option value="0">No upsell</option><option value="10">10% on top</option><option value="20">20% on top</option><option value="30">30% on top</option><option value="40">40% on top</option><option value="50">50% on top</option><option value="60">60% on top</option><option value="70">70% on top</option><option value="80">80% on top</option><option value="90">90% on top</option><option value="100">100% on top</option></select></div></div>
+              <div id="selected-breakdown" class="selected-breakdown"><p>Select two or more entries to price a bundle.</p></div>
+              <button id="clear-selection" class="text-button" type="button">Clear selection</button>
+            </section>
+          </div>
+        </div>
+        <p class="book-note">Click any entry to bring its calculation back to the counter.</p>
+      </div>
+    </section>
+    <section id="options-overlay" class="options-overlay" hidden aria-hidden="true">
+      <div class="options-panel" role="dialog" aria-modal="true" aria-labelledby="options-title">
+        <div class="options-heading"><div><p class="section-label">Merchant's preferences</p><h2 id="options-title">Options</h2></div><button id="close-options" class="book-close" type="button" aria-label="Close options">×</button></div>
+        <div class="options-content">
+          <label for="theme-select">Choose a theme</label>
+          <select id="theme-select">
+            <option value="daedric">Daedric Online (default)</option>
+            <option value="altmer">Altmer</option>
+            <option value="argonian">Argonian</option>
+            <option value="bosmer">Bosmer</option>
+            <option value="breton">Breton</option>
+            <option value="dunmer">Dunmer</option>
+            <option value="dagoth">Dagoth</option>
+            <option value="giggles">Giggles the Unstable</option>
+            <option value="imperial">Imperial</option>
+            <option value="khajiit">Khajiit</option>
+            <option value="nord">Nord</option>
+            <option value="orc">Orc</option>
+            <option value="redguard">Redguard</option>
+            <option value="goblin">Goblin</option>
+          </select>
+          <p class="option-hint">Themes change the ledger's colors and accents. Your choice is saved on this computer.</p>
+          <label class="setting-toggle"><input id="open-with-skyrim" type="checkbox" /><span><strong>Open when Skyrim Special Edition starts</strong><small>Off by default. When enabled, Merchant's Assistant watches for SkyrimSE.exe and opens itself when the game launches.</small></span></label>
+          <div class="backup-section"><p class="section-label">Local backups</p><div class="backup-actions"><button id="download-backup" class="options-action" type="button">Download backup</button><button id="open-spreadsheet" class="options-action" type="button">Open Excel sheet</button></div><small class="option-hint">Backups stay on this computer until you choose where to download them.</small></div>
+          <p id="options-status" class="option-status" role="status"></p>
+        </div>
+      </div>
+    </section>
+    <audio id="giggles-audio" preload="auto" src="giggles-unstable.wav"></audio>
+    <script src="renderer.js"></script>
+  </body>
+</html>

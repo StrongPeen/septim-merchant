@@ -1,0 +1,42 @@
+{
+  "name": "merchants-assistant",
+  "version": "1.0.0",
+  "description": "A compact always-on-top merchant calculator for Daedric Online.",
+  "author": "Daedric Online community",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "check": "node --check main.js && node --check preload.js && node --check renderer.js",
+    "build": "electron-builder --win portable --publish never"
+  },
+  "devDependencies": {
+    "electron": "^38.2.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.daedriconline.merchantsassistant",
+    "productName": "Merchant's Assistant",
+    "artifactName": "Merchants-Assistant-${version}.${ext}",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "styles.css",
+      "renderer.js",
+      "README.md",
+      "package.json",
+      "giggles-theme.jpg",
+      "giggles-unstable.wav"
+    ],
+    "asarUnpack": [
+      "README.md"
+    ],
+    "win": {
+      "target": "portable"
+    }
+  }
+}
