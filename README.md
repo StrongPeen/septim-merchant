@@ -48,10 +48,11 @@ npm run check
 npm run build
 ```
 
-The included portable EXE is `Merchants-Assistant.exe` in this folder. A fresh build creates a versioned portable EXE in the `release` folder.
+This repository contains the source code and assets for Nexus Mods review. A fresh build creates a versioned portable EXE in the `release` folder.
 
 To run the app without building it:
 
 ```powershell
 npm start
 ```
+
